@@ -1,0 +1,20 @@
+{
+  "name": "@statera/launchpad-cli",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "testnet-remote": "node --loader ts-node/esm --experimental-specifier-resolution=node dist/statera-launchpad/testnet-remote.js",
+    "testnet-remote-ps": "node --experimental-specifier-resolution=node dist/statera-launchpad/testnet-remote-start-proof-server.js",
+    "testnet-local": "node --experimental-specifier-resolution=node dist/statera-launchpad/testnet-local.js",
+    "standalone": "node --experimental-specifier-resolution=node dist/statera-launchpad/standalone.js",
+    "build": "rm -rf dist && tsc --project tsconfig.build.json"
+  },
+  "dependencies": {
+    "@statera/launchpad-api": "workspace:*",
+    "@statera/launchpad-contract": "workspace:*",
+    "pino": "^8.16.1",
+    "ws": "^8.14.2"
+  }
+}
