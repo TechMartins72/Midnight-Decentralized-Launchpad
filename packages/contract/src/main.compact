@@ -7,13 +7,11 @@ import CompactStandardLibrary;
 /** imports modules into compact main entry point **/
 import VariablesAndTypes;
 import Utils;
-import Admin;
 import TokenMint;
-import FixedSale;
-import WhiteListSale;
+import SaleManager;
 
 /** exports types, circuits and witnesses from imported modules, making them accessible **/
-export { createFixedSale, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createWhiteListSale}
+export { createSale, fundSale, claimTokens, refund, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createToken, fundingInfo, SaleInfo, FundingInfo, UserPrivateState }
 
 /** Just as in ts, constructor initializes ledger variables with specified parameter during deployment **/
 constructor(coinPubKey: Bytes<32>, initialNonce: Bytes<32>) {

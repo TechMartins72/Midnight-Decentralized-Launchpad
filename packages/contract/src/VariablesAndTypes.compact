@@ -2,19 +2,20 @@ module VariablesAndTypes {
     import CompactStandardLibrary;
 
     /** Exports the types and ledger variables **/
-    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, receiverCoinPubKey, uniqueIndex, nonce, eligibleParticipants};
+    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, receiverCoinPubKey, uniqueIndex, nonce, eligibleParticipants, UserPrivateState, FundingInfo, fundingInfo};
 
     /** Once contract is deployed, the contract receives a specified amount of token which will be minted on the token contract provided by the organizers **/
     ledger TVL: QualifiedCoinInfo; /** Holds token to be disbursed to investors - We expect that there would be token in the TVL before sale is being created **/
     ledger raisedTokenPool: QualifiedCoinInfo; // Holds token invested by investors
-    ledger receiverCoinPubKey: Bytes<32>; // Receives the funds raised contributed by investors
+    sealed ledger receiverCoinPubKey: Bytes<32>; // Receives the funds raised contributed by investors
     sealed ledger superAdmin: Bytes<32>; // There will be one super admin, who instantiate new token sale and add or remove other admins
     sealed ledger eligibleParticipants: Set<Bytes<32>>; // contains list of eligible users - in the whitelist
     ledger contractSalesInfo: Map<Bytes<32>, SaleInfo>; /** Keeps record of contract information **/
+    ledger fundingInfo: Map<Bytes<32>, FundingInfo>; /** Keeps record of contract information **/
     export ledger uniqueIndex: Counter;
     export ledger nonce: Bytes<32>; 
 
-    enum Sale { fixed, batch, Overflow, whiteList };
+    enum Sale { Public, Private };
 
     struct SaleInfo {
         target: Uint<64>;
@@ -28,17 +29,32 @@ module VariablesAndTypes {
         hasEnded: Boolean;
         min: Uint<64>;
         max: Uint<64>;
-        participant: Uint<16>;
+        participants: Uint<16>;
         organizer: Bytes<32>;
         hasWithdrawn: Boolean;
         exchangeRatio: Uint<64>;
         saleType: Sale;
         slope: Uint<32>;
     };
+
+    struct FundingInfo {
+        privateStateHash: Bytes<32>; // hash of user private state. To validate user private state 
+        claimed: Boolean; // checks if user has claimed allocation already
+    }
+
+    struct UserPrivateState {
+        saleId: Bytes<32>;
+        contribution: Uint<128>;
+        totalAllocation: Uint<64>;
+        claimedAllocation: Uint<64>;
+    }
         
     // WITNESSES
     export witness local_secret_key(): Bytes<32>;
     export witness generate_sale_id(): Bytes<32>;  
-
-
+    export witness get_current_time(): Uint<64>;
+    export witness calculateAllocation(ratio: Uint<64>, priceSlope: Uint<32>, contribution: Uint<128>, tokenSold: Uint<64> ): Uint<64>;
+    export witness update_user_private_state(newPrivateState: UserPrivateState) :[]; 
+    export witness get_user_private_state_hash(saleId: Bytes<32>) :UserPrivateState;
+    export witness remove_sale_from_private_state(saleId: Bytes<32>) :[];
 }

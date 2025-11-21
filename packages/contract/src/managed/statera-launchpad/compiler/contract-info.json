@@ -1,14 +1,14 @@
 {
   "circuits": [
     {
-      "name": "createFixedSale",
+      "name": "createToken",
       "pure": false,
       "arguments": [
         {
-          "name": "start_price",
+          "name": "domain_sep",
           "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
+            "type-name": "Bytes",
+            "length": 32
           }
         },
         {
@@ -16,62 +16,6 @@
           "type": {
             "type-name": "Uint",
             "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "total_amount_sold",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "exchange_token",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "current_time",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "end_time",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "min",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "max",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "infoCID",
-          "type": {
-            "type-name": "Bytes",
-            "length": 32
-          }
-        },
-        {
-          "name": "price_slope",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 4294967295
           }
         }
       ],
@@ -82,7 +26,7 @@
       }
     },
     {
-      "name": "createWhiteListSale",
+      "name": "createSale",
       "pure": false,
       "arguments": [
         {
@@ -111,13 +55,6 @@
           "type": {
             "type-name": "Bytes",
             "length": 32
-          }
-        },
-        {
-          "name": "current_time",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
           }
         },
         {
@@ -153,6 +90,103 @@
           "type": {
             "type-name": "Uint",
             "maxval": 4294967295
+          }
+        },
+        {
+          "name": "isPrivate",
+          "type": {
+            "type-name": "Boolean"
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "fundSale",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
+          }
+        },
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "claimTokens",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "refund",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        },
+        {
+          "name": "refundAmount",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
           }
         }
       ],
@@ -180,6 +214,162 @@
       "result type": {
         "type-name": "Bytes",
         "length": 32
+      }
+    },
+    {
+      "name": "get_current_time",
+      "arguments": [
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "calculateAllocation",
+      "arguments": [
+        {
+          "name": "ratio",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        },
+        {
+          "name": "priceSlope",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "contribution",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 340282366920938463463374607431768211455
+          }
+        },
+        {
+          "name": "tokenSold",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result type": {
+        "type-name": "Uint",
+        "maxval": 18446744073709551615
+      }
+    },
+    {
+      "name": "update_user_private_state",
+      "arguments": [
+        {
+          "name": "newPrivateState",
+          "type": {
+            "type-name": "Struct",
+            "name": "UserPrivateState",
+            "elements": [
+              {
+                "name": "saleId",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "contribution",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              },
+              {
+                "name": "totalAllocation",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              },
+              {
+                "name": "claimedAllocation",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 18446744073709551615
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "result type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "get_user_private_state_hash",
+      "arguments": [
+        {
+          "name": "saleId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result type": {
+        "type-name": "Struct",
+        "name": "UserPrivateState",
+        "elements": [
+          {
+            "name": "saleId",
+            "type": {
+              "type-name": "Bytes",
+              "length": 32
+            }
+          },
+          {
+            "name": "contribution",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 340282366920938463463374607431768211455
+            }
+          },
+          {
+            "name": "totalAllocation",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          },
+          {
+            "name": "claimedAllocation",
+            "type": {
+              "type-name": "Uint",
+              "maxval": 18446744073709551615
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "remove_sale_from_private_state",
+      "arguments": [
+        {
+          "name": "saleId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
       }
     }
   ],

@@ -4,8 +4,6 @@ module TokenMint {
 
     export {createToken, uniqueIndex, nonce};
     
-
-
     export circuit createToken(
         domain_sep: Bytes<32>,
         total_amount: Uint<64>,

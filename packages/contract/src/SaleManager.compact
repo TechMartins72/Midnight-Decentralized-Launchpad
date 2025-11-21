@@ -1,0 +1,212 @@
+module SaleManager {
+    import CompactStandardLibrary;
+    import VariablesAndTypes;
+    import Utils;
+
+    export { createSale, fundSale, claimTokens };
+
+    /**This same circuit can be used for BATCH, FIXED, FCFS,  **/
+
+    circuit createSale(
+        start_price: Uint<64>, // The (start) price of a token
+        total_amount: Uint<64>, // The total amount of token to be sold in this particular sale
+        total_amount_sold: Uint<64>, // The total amount of token sold in this particular sale
+        exchange_token: Bytes<32>, // The token color of the exchange token - token to be received
+        end_time: Uint<64>, // The time which a sale ends
+        min: Uint<64>, // Min amount of token a user can buy 
+        max: Uint<64>, // Max amount of token a user can buy 
+        infoCID: Bytes<32>, // CID that points to other informatin about sale on ipfs
+        price_slope: Uint<32>, // influences the price, if it is a dynamic price sale
+        isPrivate: Boolean,
+    ) :[] {
+        /** The assert() circuit throws break out the circuit operation and throws the error message on the right of the condition **/
+        assert(disclose(start_price) > 0, "Sale ratio must be greater than 0!");
+        /** Asserts that the total amount of token to be sold is not beyond the amount locked in the contract **/
+        assert(disclose(total_amount) > 0 && disclose(total_amount) <= TVL.value, "Sale amount must be greater than 0!");
+        
+        const organizer = public_key(disclose(local_secret_key()));
+        const saleId = disclose(generate_sale_id());
+
+        const current_time = disclose(get_current_time());
+
+        /** stores information about sales**/
+        contractSalesInfo.insert(saleId, SaleInfo {
+            target: disclose(total_amount) * disclose(start_price) as Uint<64>,
+            startTime: disclose(current_time),
+            endTime: disclose(end_time),
+            totalTokenAmount: disclose(total_amount),
+            totalTokenSold: disclose(total_amount_sold),
+            saleInfoCID: disclose(infoCID),
+            amountRaised: 0,
+            acceptableExchangeToken: disclose(exchange_token),
+            hasEnded: false,
+            min: disclose(min),
+            max: disclose(max),
+            participants: 0,
+            organizer: default<Bytes<32>>,
+            hasWithdrawn: false,
+            exchangeRatio: disclose(start_price),
+            saleType: disclose(isPrivate) ?  Sale.Private : Sale.Public,
+            slope: disclose(price_slope)
+        });
+    }
+
+    circuit fundSale(coin: CoinInfo, sale_id: Bytes<32>) :[] {
+        /** Disclosing parameters for better code readability **/
+        const disclosedCoin = disclose(coin);
+        const disclosedCoinAmount = disclosedCoin.value;
+        const disclosedSaleId = disclose(sale_id);
+        
+        assert(contractSalesInfo.member(disclosedSaleId), "This sale doesn't exist");
+        const userPk = ownPublicKey().bytes;  // ownPublicKey, which is unique is used to create commit hash for user Private State
+        const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+        
+        if (saleInfo.saleType == Sale.Private) {
+            assert(eligibleParticipants.member(userPk), "You are not eligible for this sale");
+        } else {
+            return;
+        }
+
+        assert(!saleInfo.hasEnded, "This sale has ended");
+        assert(saleInfo.acceptableExchangeToken == disclosedCoin.color, "Please provided the acceptable token");
+        assert(disclosedCoinAmount <= saleInfo.max && disclosedCoinAmount >= saleInfo.min, "Amount entered breaches did not fall within threshold");
+        assert(saleInfo.amountRaised < saleInfo.target, "Sale target has already been achieved");
+
+        // receives the token
+        recieveFund(disclosedCoin);
+        
+        const funder = public_key(disclose(local_secret_key()));
+        const allocation = disclose(calculateAllocation(saleInfo.exchangeRatio, saleInfo.slope, disclosedCoinAmount, saleInfo.totalTokenSold));
+    
+        const newPrivateState = UserPrivateState {
+            saleId: disclosedSaleId,
+            contribution: disclosedCoinAmount,
+            totalAllocation: allocation,
+            claimedAllocation: 0
+        };
+
+        update_user_private_state(newPrivateState); // adds the newPrivateState to existing private state
+        
+        const userPrivateStateHash = generatePrivateStateHash(newPrivateState, userPk); // we hash the user's private state witht userPk=
+
+        fundingInfo.insert(funder, FundingInfo {
+            privateStateHash: userPrivateStateHash, // stores the hash of user's private state for validity check during claim
+            claimed: false
+        });
+
+        /** Updating contract state **/
+        const current_time = disclose(get_current_time());
+        contractSalesInfo.insert(disclosedSaleId, SaleInfo {
+            ...saleInfo,
+            hasEnded: current_time > saleInfo.endTime,
+            participants: saleInfo.participants + 1 as Uint<16>,
+            amountRaised: 0,
+            totalTokenSold: disclosedCoinAmount + saleInfo.totalTokenSold as Uint<64>,
+        });
+    }
+    
+    circuit claimTokens(sale_id: Bytes<32>):[] {
+        const disclosedSaleId = disclose(sale_id);
+        const userPk = ownPublicKey().bytes;  // ownPublicKey, which is unique is used to create commit hash for user Private State
+
+        assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
+        const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+        assert(saleInfo.hasEnded, "Can't claim token until sale is over");
+        // assert(vesting period is over)
+        const funderPk = public_key(disclose(local_secret_key()));
+        assert(fundingInfo.member(funderPk), "You didnt not participate in this sale");
+        const funderOnchainInfo = fundingInfo.lookup(funderPk);
+        
+        const funderPrivateState = disclose(get_user_private_state_hash(disclosedSaleId));
+        const funderPrivateStateHash = generatePrivateStateHash(funderPrivateState, userPk); // we hash the user's private state witht userPk=
+        assert(funderPrivateStateHash == funderOnchainInfo.privateStateHash, "Private state and onchain state mismatch");
+        assert(funderOnchainInfo.claimed == false || funderPrivateState.totalAllocation == funderPrivateState.claimedAllocation, "you have already claimed your token");
+
+        const sendResult = send(TVL, left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()), funderPrivateState.totalAllocation);
+        
+        if(sendResult.change.is_some){
+            TVL.writeCoin(
+                sendResult.change.value,
+                right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+            );
+        }else{
+            TVL.resetToDefault();
+        }
+
+        const newPrivateState = UserPrivateState {
+            ...funderPrivateState,
+            claimedAllocation: funderPrivateState.totalAllocation
+        };
+        update_user_private_state(newPrivateState); // adds the newPrivateState to existing private state
+        
+        const newFunderPrivateStateHash = generatePrivateStateHash(newPrivateState, userPk); // we hash the user's private state witht userPk=
+        fundingInfo.insert(funderPk, FundingInfo {
+            privateStateHash: newFunderPrivateStateHash, // stores the hash of user's private state for validity check during claim
+            claimed: true
+        });
+    }
+
+    export circuit refund(sale_id: Bytes<32>, refundAmount: Uint<64>): [] {
+        const disclosedSaleId = disclose(sale_id);
+        const disclosedRefundAmount = disclose(refundAmount);
+        const userPk = ownPublicKey().bytes;  // ownPublicKey, which is unique is used to create commit hash for user Private State
+
+        assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
+        const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+        assert(!saleInfo.hasEnded, "Sale is over can't apply for a refund");
+        // assert(vesting period is over)
+        const funderPk = public_key(disclose(local_secret_key()));
+        assert(fundingInfo.member(funderPk), "You didnt not participate in this sale");
+        const funderOnchainInfo = fundingInfo.lookup(funderPk);
+        
+        const funderPrivateState = disclose(get_user_private_state_hash(disclosedSaleId));
+        const funderPrivateStateHash = generatePrivateStateHash(funderPrivateState, userPk); // we hash the user's private state witht userPk=
+        assert(funderPrivateStateHash == funderOnchainInfo.privateStateHash, "Private state and onchain state mismatch");
+        assert(funderPrivateState.contribution >= disclosedRefundAmount, "Refund can not be greater than contribution");
+
+        if ( funderPrivateState.contribution != disclosedRefundAmount ) {
+            const sendResult = send(raisedTokenPool, left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()), disclosedRefundAmount);
+            
+            if(sendResult.change.is_some){
+                raisedTokenPool.writeCoin(
+                    sendResult.change.value,
+                    right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+                );
+            }else{
+                raisedTokenPool.resetToDefault();
+            }
+
+            const contribution = funderPrivateState.contribution - disclosedRefundAmount;
+            const allocation = disclose(calculateAllocation(saleInfo.exchangeRatio, saleInfo.slope, contribution, saleInfo.totalTokenSold));
+    
+            const newPrivateState = UserPrivateState {
+                ...funderPrivateState,
+                contribution: contribution,
+                totalAllocation: allocation,
+            };
+
+            update_user_private_state(newPrivateState); // adds the newPrivateState to existing private state
+            
+            const userPrivateStateHash = generatePrivateStateHash(newPrivateState, userPk); // we hash the user's private state witht userPk=
+
+            fundingInfo.insert(funderPk, FundingInfo {
+                privateStateHash: userPrivateStateHash, // stores the hash of user's private state for validity check during claim
+                claimed: false
+            });
+        } else {
+            const sendResult = send(raisedTokenPool, left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey()), disclosedRefundAmount);
+            
+            if(sendResult.change.is_some){
+                raisedTokenPool.writeCoin(
+                    sendResult.change.value,
+                    right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+                );
+            }else{
+                raisedTokenPool.resetToDefault();
+            }
+            remove_sale_from_private_state(disclosedSaleId);
+            fundingInfo.remove(disclosedSaleId);
+        }
+    }
+    
+}

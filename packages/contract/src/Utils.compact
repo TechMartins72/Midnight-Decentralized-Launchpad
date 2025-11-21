@@ -1,8 +1,29 @@
 module Utils {
 
     import CompactStandardLibrary;
+    import VariablesAndTypes;
 
     export circuit public_key(sk: Bytes<32>): Bytes<32> {
         return persistentHash<Vector<2, Bytes<32>>>([pad(32, "statera-launchpad:user-pk"), sk]);
-}
+    }
+
+    export circuit generatePrivateStateHash(metadata: UserPrivateState, userPk: Bytes<32>): Bytes<32>{
+        return persistentCommit<UserPrivateState>(
+            metadata,
+            userPk
+        );
+    }
+    export circuit recieveFund(disclosedCoin: CoinInfo): []{
+        receive(disclosedCoin);
+
+        /** Update the ledger balance */
+        const coinToInsert = raisedTokenPool.value > 0 ? 
+            mergeCoinImmediate(raisedTokenPool, disclosedCoin) :
+            disclosedCoin;
+
+        raisedTokenPool.writeCoin(
+            coinToInsert,
+            right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+    );
+    }
 }
