@@ -286,29 +286,29 @@ class Contract {
     }
     this.witnesses = witnesses_0;
     this.circuits = {
-      createToken: (...args_1) => {
+      createYourToken: (...args_1) => {
         if (args_1.length !== 3) {
-          throw new __compactRuntime.CompactError(`createToken: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
+          throw new __compactRuntime.CompactError(`createYourToken: expected 3 arguments (as invoked from Typescript), received ${args_1.length}`);
         }
         const contextOrig_0 = args_1[0];
         const domain_sep_0 = args_1[1];
         const total_amount_0 = args_1[2];
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.originalState != undefined && contextOrig_0.transactionContext != undefined)) {
-          __compactRuntime.type_error('createToken',
+          __compactRuntime.type_error('createYourToken',
                                       'argument 1 (as invoked from Typescript)',
                                       'TokenMint.compact line 7 char 5',
                                       'CircuitContext',
                                       contextOrig_0)
         }
         if (!(domain_sep_0.buffer instanceof ArrayBuffer && domain_sep_0.BYTES_PER_ELEMENT === 1 && domain_sep_0.length === 32)) {
-          __compactRuntime.type_error('createToken',
+          __compactRuntime.type_error('createYourToken',
                                       'argument 1 (argument 2 as invoked from Typescript)',
                                       'TokenMint.compact line 7 char 5',
                                       'Bytes<32>',
                                       domain_sep_0)
         }
         if (!(typeof(total_amount_0) === 'bigint' && total_amount_0 >= 0n && total_amount_0 <= 18446744073709551615n)) {
-          __compactRuntime.type_error('createToken',
+          __compactRuntime.type_error('createYourToken',
                                       'argument 2 (argument 3 as invoked from Typescript)',
                                       'TokenMint.compact line 7 char 5',
                                       'Uint<0..18446744073709551615>',
@@ -324,10 +324,10 @@ class Contract {
           publicTranscript: [],
           privateTranscriptOutputs: []
         };
-        const result_0 = this._createToken_0(context,
-                                             partialProofData,
-                                             domain_sep_0,
-                                             total_amount_0);
+        const result_0 = this._createYourToken_0(context,
+                                                 partialProofData,
+                                                 domain_sep_0,
+                                                 total_amount_0);
         partialProofData.output = { value: [], alignment: [] };
         return { result: result_0, context: context, proofData: partialProofData };
       },
@@ -349,77 +349,77 @@ class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.originalState != undefined && contextOrig_0.transactionContext != undefined)) {
           __compactRuntime.type_error('createSale',
                                       'argument 1 (as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'CircuitContext',
                                       contextOrig_0)
         }
         if (!(typeof(start_price_0) === 'bigint' && start_price_0 >= 0n && start_price_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 1 (argument 2 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       start_price_0)
         }
         if (!(typeof(total_amount_0) === 'bigint' && total_amount_0 >= 0n && total_amount_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 2 (argument 3 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       total_amount_0)
         }
         if (!(typeof(total_amount_sold_0) === 'bigint' && total_amount_sold_0 >= 0n && total_amount_sold_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 3 (argument 4 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       total_amount_sold_0)
         }
         if (!(exchange_token_0.buffer instanceof ArrayBuffer && exchange_token_0.BYTES_PER_ELEMENT === 1 && exchange_token_0.length === 32)) {
           __compactRuntime.type_error('createSale',
                                       'argument 4 (argument 5 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Bytes<32>',
                                       exchange_token_0)
         }
         if (!(typeof(end_time_0) === 'bigint' && end_time_0 >= 0n && end_time_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 5 (argument 6 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       end_time_0)
         }
         if (!(typeof(min_0) === 'bigint' && min_0 >= 0n && min_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 6 (argument 7 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       min_0)
         }
         if (!(typeof(max_0) === 'bigint' && max_0 >= 0n && max_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 7 (argument 8 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..18446744073709551615>',
                                       max_0)
         }
         if (!(infoCID_0.buffer instanceof ArrayBuffer && infoCID_0.BYTES_PER_ELEMENT === 1 && infoCID_0.length === 32)) {
           __compactRuntime.type_error('createSale',
                                       'argument 8 (argument 9 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Bytes<32>',
                                       infoCID_0)
         }
         if (!(typeof(price_slope_0) === 'bigint' && price_slope_0 >= 0n && price_slope_0 <= 4294967295n)) {
           __compactRuntime.type_error('createSale',
                                       'argument 9 (argument 10 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Uint<0..4294967295>',
                                       price_slope_0)
         }
         if (!(typeof(isPrivate_0) === 'boolean')) {
           __compactRuntime.type_error('createSale',
                                       'argument 10 (argument 11 as invoked from Typescript)',
-                                      'SaleManager.compact line 10 char 5',
+                                      'SalesManager.compact line 10 char 5',
                                       'Boolean',
                                       isPrivate_0)
         }
@@ -458,21 +458,21 @@ class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.originalState != undefined && contextOrig_0.transactionContext != undefined)) {
           __compactRuntime.type_error('fundSale',
                                       'argument 1 (as invoked from Typescript)',
-                                      'SaleManager.compact line 54 char 5',
+                                      'SalesManager.compact line 54 char 5',
                                       'CircuitContext',
                                       contextOrig_0)
         }
         if (!(typeof(coin_0) === 'object' && coin_0.nonce.buffer instanceof ArrayBuffer && coin_0.nonce.BYTES_PER_ELEMENT === 1 && coin_0.nonce.length === 32 && coin_0.color.buffer instanceof ArrayBuffer && coin_0.color.BYTES_PER_ELEMENT === 1 && coin_0.color.length === 32 && typeof(coin_0.value) === 'bigint' && coin_0.value >= 0n && coin_0.value <= 340282366920938463463374607431768211455n)) {
           __compactRuntime.type_error('fundSale',
                                       'argument 1 (argument 2 as invoked from Typescript)',
-                                      'SaleManager.compact line 54 char 5',
+                                      'SalesManager.compact line 54 char 5',
                                       'struct CoinInfo<nonce: Bytes<32>, color: Bytes<32>, value: Uint<0..340282366920938463463374607431768211455>>',
                                       coin_0)
         }
         if (!(sale_id_0.buffer instanceof ArrayBuffer && sale_id_0.BYTES_PER_ELEMENT === 1 && sale_id_0.length === 32)) {
           __compactRuntime.type_error('fundSale',
                                       'argument 2 (argument 3 as invoked from Typescript)',
-                                      'SaleManager.compact line 54 char 5',
+                                      'SalesManager.compact line 54 char 5',
                                       'Bytes<32>',
                                       sale_id_0)
         }
@@ -502,14 +502,14 @@ class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.originalState != undefined && contextOrig_0.transactionContext != undefined)) {
           __compactRuntime.type_error('claimTokens',
                                       'argument 1 (as invoked from Typescript)',
-                                      'SaleManager.compact line 108 char 5',
+                                      'SalesManager.compact line 108 char 5',
                                       'CircuitContext',
                                       contextOrig_0)
         }
         if (!(sale_id_0.buffer instanceof ArrayBuffer && sale_id_0.BYTES_PER_ELEMENT === 1 && sale_id_0.length === 32)) {
           __compactRuntime.type_error('claimTokens',
                                       'argument 1 (argument 2 as invoked from Typescript)',
-                                      'SaleManager.compact line 108 char 5',
+                                      'SalesManager.compact line 108 char 5',
                                       'Bytes<32>',
                                       sale_id_0)
         }
@@ -539,21 +539,21 @@ class Contract {
         if (!(typeof(contextOrig_0) === 'object' && contextOrig_0.originalState != undefined && contextOrig_0.transactionContext != undefined)) {
           __compactRuntime.type_error('refund',
                                       'argument 1 (as invoked from Typescript)',
-                                      'SaleManager.compact line 149 char 5',
+                                      'SalesManager.compact line 149 char 5',
                                       'CircuitContext',
                                       contextOrig_0)
         }
         if (!(sale_id_0.buffer instanceof ArrayBuffer && sale_id_0.BYTES_PER_ELEMENT === 1 && sale_id_0.length === 32)) {
           __compactRuntime.type_error('refund',
                                       'argument 1 (argument 2 as invoked from Typescript)',
-                                      'SaleManager.compact line 149 char 5',
+                                      'SalesManager.compact line 149 char 5',
                                       'Bytes<32>',
                                       sale_id_0)
         }
         if (!(typeof(refundAmount_0) === 'bigint' && refundAmount_0 >= 0n && refundAmount_0 <= 18446744073709551615n)) {
           __compactRuntime.type_error('refund',
                                       'argument 2 (argument 3 as invoked from Typescript)',
-                                      'SaleManager.compact line 149 char 5',
+                                      'SalesManager.compact line 149 char 5',
                                       'Uint<0..18446744073709551615>',
                                       refundAmount_0)
         }
@@ -576,7 +576,7 @@ class Contract {
       }
     };
     this.impureCircuits = {
-      createToken: this.circuits.createToken,
+      createYourToken: this.circuits.createYourToken,
       createSale: this.circuits.createSale,
       fundSale: this.circuits.fundSale,
       claimTokens: this.circuits.claimTokens,
@@ -588,7 +588,7 @@ class Contract {
       throw new __compactRuntime.CompactError(`Contract state constructor: expected 3 arguments (as invoked from Typescript), received ${args_0.length}`);
     }
     const constructorContext_0 = args_0[0];
-    const coinPubKey_0 = args_0[1];
+    const address_0 = args_0[1];
     const initialNonce_0 = args_0[2];
     if (typeof(constructorContext_0) !== 'object') {
       throw new __compactRuntime.CompactError(`Contract state constructor: expected 'constructorContext' in argument 1 (as invoked from Typescript) to be an object`);
@@ -602,12 +602,12 @@ class Contract {
     if (typeof(constructorContext_0.initialZswapLocalState) !== 'object') {
       throw new __compactRuntime.CompactError(`Contract state constructor: expected 'initialZswapLocalState' in argument 1 (as invoked from Typescript) to be an object`);
     }
-    if (!(coinPubKey_0.buffer instanceof ArrayBuffer && coinPubKey_0.BYTES_PER_ELEMENT === 1 && coinPubKey_0.length === 32)) {
+    if (!(typeof(address_0) === 'object' && address_0.bytes.buffer instanceof ArrayBuffer && address_0.bytes.BYTES_PER_ELEMENT === 1 && address_0.bytes.length === 32)) {
       __compactRuntime.type_error('Contract state constructor',
                                   'argument 1 (argument 2 as invoked from Typescript)',
                                   'main.compact line 17 char 1',
-                                  'Bytes<32>',
-                                  coinPubKey_0)
+                                  'struct ZswapCoinPublicKey<bytes: Bytes<32>>',
+                                  address_0)
     }
     if (!(initialNonce_0.buffer instanceof ArrayBuffer && initialNonce_0.BYTES_PER_ELEMENT === 1 && initialNonce_0.length === 32)) {
       __compactRuntime.type_error('Contract state constructor',
@@ -628,7 +628,7 @@ class Contract {
     stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
     stateValue_0 = stateValue_0.arrayPush(__compactRuntime.StateValue.newNull());
     state_0.data = stateValue_0;
-    state_0.setOperation('createToken', new __compactRuntime.ContractOperation());
+    state_0.setOperation('createYourToken', new __compactRuntime.ContractOperation());
     state_0.setOperation('createSale', new __compactRuntime.ContractOperation());
     state_0.setOperation('fundSale', new __compactRuntime.ContractOperation());
     state_0.setOperation('claimTokens', new __compactRuntime.ContractOperation());
@@ -672,8 +672,8 @@ class Contract {
                                value: __compactRuntime.StateValue.newCell({ value: _descriptor_23.toValue(2n),
                                                                             alignment: _descriptor_23.alignment() }).encode() } },
                      { push: { storage: true,
-                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_0.toValue(new Uint8Array(32)),
-                                                                            alignment: _descriptor_0.alignment() }).encode() } },
+                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_11.toValue({ bytes: new Uint8Array(32) }),
+                                                                            alignment: _descriptor_11.alignment() }).encode() } },
                      { ins: { cached: false, n: 1 } }]);
     Contract._query(context,
                     partialProofData,
@@ -771,8 +771,8 @@ class Contract {
                                value: __compactRuntime.StateValue.newCell({ value: _descriptor_23.toValue(2n),
                                                                             alignment: _descriptor_23.alignment() }).encode() } },
                      { push: { storage: true,
-                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_0.toValue(coinPubKey_0),
-                                                                            alignment: _descriptor_0.alignment() }).encode() } },
+                               value: __compactRuntime.StateValue.newCell({ value: _descriptor_11.toValue(address_0),
+                                                                            alignment: _descriptor_11.alignment() }).encode() } },
                      { ins: { cached: false, n: 1 } }]);
     state_0.data = context.transactionContext.state;
     return {
@@ -1442,7 +1442,7 @@ class Contract {
                      { ins: { cached: false, n: 1 } }]);
     return [];
   }
-  _createToken_0(context, partialProofData, domain_sep_0, total_amount_0) {
+  _createYourToken_0(context, partialProofData, domain_sep_0, total_amount_0) {
     const discloseDomainSep_0 = domain_sep_0;
     const disclosedAmount_0 = total_amount_0;
     __compactRuntime.assert(disclosedAmount_0 > 0n,
@@ -1535,7 +1535,7 @@ class Contract {
     const tmp_0 = { target:
                       ((t1) => {
                         if (t1 > 18446744073709551615n) {
-                          throw new __compactRuntime.CompactError('SaleManager.compact line 34 char 21: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
+                          throw new __compactRuntime.CompactError('SalesManager.compact line 34 char 21: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
                         }
                         return t1;
                       })(total_amount_0 * start_price_0),
@@ -1686,7 +1686,7 @@ class Contract {
                       totalTokenSold:
                         ((t1) => {
                           if (t1 > 18446744073709551615n) {
-                            throw new __compactRuntime.CompactError('SaleManager.compact line 104 char 29: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
+                            throw new __compactRuntime.CompactError('SalesManager.compact line 104 char 29: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 18446744073709551615');
                           }
                           return t1;
                         })(disclosedCoinAmount_0 + saleInfo_0.totalTokenSold),
@@ -1700,7 +1700,7 @@ class Contract {
                       participants:
                         ((t1) => {
                           if (t1 > 65535n) {
-                            throw new __compactRuntime.CompactError('SaleManager.compact line 102 char 27: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 65535');
+                            throw new __compactRuntime.CompactError('SalesManager.compact line 102 char 27: cast from unsigned value to smaller unsigned value failed: ' + t1 + ' is greater than 65535');
                           }
                           return t1;
                         })(saleInfo_0.participants + 1n),

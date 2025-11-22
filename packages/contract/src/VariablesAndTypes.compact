@@ -2,12 +2,12 @@ module VariablesAndTypes {
     import CompactStandardLibrary;
 
     /** Exports the types and ledger variables **/
-    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, receiverCoinPubKey, uniqueIndex, nonce, eligibleParticipants, UserPrivateState, FundingInfo, fundingInfo};
+    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, receiverAddress, uniqueIndex, nonce, eligibleParticipants, UserPrivateState, FundingInfo, fundingInfo};
 
     /** Once contract is deployed, the contract receives a specified amount of token which will be minted on the token contract provided by the organizers **/
     ledger TVL: QualifiedCoinInfo; /** Holds token to be disbursed to investors - We expect that there would be token in the TVL before sale is being created **/
     ledger raisedTokenPool: QualifiedCoinInfo; // Holds token invested by investors
-    sealed ledger receiverCoinPubKey: Bytes<32>; // Receives the funds raised contributed by investors
+    sealed ledger receiverAddress: ZswapCoinPublicKey; // Receives the funds raised contributed by investors
     sealed ledger superAdmin: Bytes<32>; // There will be one super admin, who instantiate new token sale and add or remove other admins
     sealed ledger eligibleParticipants: Set<Bytes<32>>; // contains list of eligible users - in the whitelist
     ledger contractSalesInfo: Map<Bytes<32>, SaleInfo>; /** Keeps record of contract information **/

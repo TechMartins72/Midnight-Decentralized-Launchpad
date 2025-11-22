@@ -1,7 +1,7 @@
 {
   "circuits": [
     {
-      "name": "createToken",
+      "name": "createYourToken",
       "pure": false,
       "arguments": [
         {

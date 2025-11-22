@@ -2,9 +2,9 @@ module TokenMint {
     import CompactStandardLibrary;
     import VariablesAndTypes;
 
-    export {createToken, uniqueIndex, nonce};
+    export {createYourToken, uniqueIndex, nonce};
     
-    export circuit createToken(
+    export circuit createYourToken(
         domain_sep: Bytes<32>,
         total_amount: Uint<64>,
     ) :[] {
@@ -22,6 +22,5 @@ module TokenMint {
             left<ZswapCoinPublicKey, ContractAddress>(ownPublicKey())
         );
         uniqueIndex.increment(1);
-}
-
+    }
 }

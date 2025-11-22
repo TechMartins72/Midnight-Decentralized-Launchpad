@@ -8,16 +8,16 @@ import CompactStandardLibrary;
 import VariablesAndTypes;
 import Utils;
 import TokenMint;
-import SaleManager;
+import SalesManager;
 
 /** exports types, circuits and witnesses from imported modules, making them accessible **/
-export { createSale, fundSale, claimTokens, refund, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createToken, fundingInfo, SaleInfo, FundingInfo, UserPrivateState }
+export { createSale, fundSale, claimTokens, refund, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createYourToken, fundingInfo, SaleInfo, FundingInfo, UserPrivateState };
 
 /** Just as in ts, constructor initializes ledger variables with specified parameter during deployment **/
-constructor(coinPubKey: Bytes<32>, initialNonce: Bytes<32>) {
+constructor(address: ZswapCoinPublicKey, initialNonce: Bytes<32>) {
     nonce = disclose(initialNonce);
     uniqueIndex.increment(1);
-    receiverCoinPubKey = disclose(coinPubKey);
+    receiverAddress = disclose(address);
 }
 
 /** This compact page does nothing more that being the entry point to our contract and exporting all defined circuits, witnesses and ledger **/

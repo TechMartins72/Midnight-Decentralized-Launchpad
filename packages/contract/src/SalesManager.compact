@@ -1,9 +1,9 @@
-module SaleManager {
+module SalesManager {
     import CompactStandardLibrary;
     import VariablesAndTypes;
     import Utils;
 
-    export { createSale, fundSale, claimTokens };
+    export { createSale, fundSale, claimTokens, refund };
 
     /**This same circuit can be used for BATCH, FIXED, FCFS,  **/
 
@@ -207,6 +207,29 @@ module SaleManager {
             remove_sale_from_private_state(disclosedSaleId);
             fundingInfo.remove(disclosedSaleId);
         }
+    }
+
+    export circuit receiveFundsRaised(sale_id: Bytes<32>) :[] {
+        const disclosedSaleId = disclose(sale_id);
+        assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");  
+        const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+        assert(!saleInfo.hasEnded, "Sale is over can't receive funds yet");
+        assert(!saleInfo.hasWithdrawn, "Funds has been withdrawn from this sale");
+
+        const sendResult = send(raisedTokenPool, left<ZswapCoinPublicKey, ContractAddress>(receiverAddress), saleInfo.target);
+
+        if(sendResult.change.is_some){
+            raisedTokenPool.writeCoin(
+                sendResult.change.value,
+                right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
+            );
+        }else{
+            raisedTokenPool.resetToDefault();
+        }
+        contractSalesInfo.insert(disclosedSaleId, SaleInfo {
+            ...saleInfo,
+            hasWithdrawn: true,
+        });
     }
     
 }

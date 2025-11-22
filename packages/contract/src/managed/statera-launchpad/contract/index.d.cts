@@ -47,9 +47,9 @@ export type Witnesses<T> = {
 }
 
 export type ImpureCircuits<T> = {
-  createToken(context: __compactRuntime.CircuitContext<T>,
-              domain_sep_0: Uint8Array,
-              total_amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  createYourToken(context: __compactRuntime.CircuitContext<T>,
+                  domain_sep_0: Uint8Array,
+                  total_amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
   createSale(context: __compactRuntime.CircuitContext<T>,
              start_price_0: bigint,
              total_amount_0: bigint,
@@ -74,9 +74,9 @@ export type PureCircuits = {
 }
 
 export type Circuits<T> = {
-  createToken(context: __compactRuntime.CircuitContext<T>,
-              domain_sep_0: Uint8Array,
-              total_amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
+  createYourToken(context: __compactRuntime.CircuitContext<T>,
+                  domain_sep_0: Uint8Array,
+                  total_amount_0: bigint): __compactRuntime.CircuitResults<T, []>;
   createSale(context: __compactRuntime.CircuitContext<T>,
              start_price_0: bigint,
              total_amount_0: bigint,
@@ -135,7 +135,7 @@ export declare class Contract<T, W extends Witnesses<T> = Witnesses<T>> {
   impureCircuits: ImpureCircuits<T>;
   constructor(witnesses: W);
   initialState(context: __compactRuntime.ConstructorContext<T>,
-               coinPubKey_0: Uint8Array,
+               address_0: { bytes: Uint8Array },
                initialNonce_0: Uint8Array): __compactRuntime.ConstructorResult<T>;
 }
 
