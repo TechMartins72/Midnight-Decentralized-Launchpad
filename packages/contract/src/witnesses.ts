@@ -3,7 +3,6 @@ import type {
   UserPrivateState,
 } from "./managed/statera-launchpad/contract/index.cjs";
 import {
-  witnessContext,
   WitnessContext,
 } from "@midnight-ntwrk/compact-runtime";
 
