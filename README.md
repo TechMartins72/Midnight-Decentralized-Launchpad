@@ -1,135 +1,217 @@
-# Turborepo starter
+# 🐱 Midnight Launchpad
 
-This Turborepo starter is maintained by the Turborepo core team.
+<div align="center">
 
-## Using this example
+[![Midnight Network](https://midnight.network/brand-hub/logo-dark.svg)](https://midnight.network)
 
-Run the following command:
+[![Compact](https://img.shields.io/badge/Compact-Language-blue?style=for-the-badge)](https://docs.midnight.network)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org)
 
-```sh
-npx create-turbo@latest
-```
+*A Decentralized Crypto Launchpad on the Midnight Blockchain - showcasing its capabilities with its privacy preserving smart contract, Compact.*
 
-## What's inside?
+</div>
 
-This Turborepo includes the following packages/apps:
+## Table of Contents
 
-### Apps and Packages
+- [Project Overview](#project-overview)
+- [Key Features](#key-features)
+- [Technical Architecture](#technical-architecture)
+- [Project Structure & Components](#project-structure--components)
+- [Getting Started](#-getting-started)
+- [Compact Language & Smart Contract](#compact-language--smart-contract)
+- [NFT Module Integration](#nft-module-integration)
+- [Development & Testing](#-development--testing)
+- [Why This Project Matters](#why-this-project-matters)
+- [Documentation](#documentation)
+- [Documentation & Resources](#documentation--resources)
+- [Contributing](#contributing)
+- [License](#-license)
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Documentation & Guides
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+- [Contract Guide](packages/contracts/kitties/README.md)
+- [API Reference](packages/api/kitties/README.md)
+- [CLI Usage Guide](packages/cli/kitties/README.md)
 
-### Utilities
+## Project Overview
 
-This Turborepo has some additional tools already setup for you:
+**Midnight Launchpad** is a decentralized crypto launchpad, inpired by **Polkastarter**. It demonstrates the capabilities of the **Midnight blockchain** ecosystem and its smart contract, **Compact programming language**, showing how it ensures privacy with compliance and gives users control over their own data.
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Key Features
 
-### Build
+- **Compact Language Learning** - A practical example of building with Midnight's Compact programming language
+- **Full-Stack Application** - Web UI, CLI tools, APIs, and testing framework
 
-To build all apps and packages, run the following command:
+## Technical Architecture
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+This project shows how different components work together in the Midnight ecosystem:
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+  ┌─────────────────────┐    ┌─────────────────────┐
+  │    Web Frontend     │    │    CLI Interface    │
+  │                     │    │                     │
+  │ • React + Material  │    │ • Interactive Menu  │
+  │ • Wallet Connect    │    │ • Contract Deploy   │
+  │ • Real-time State   │    │ • Breeding Tools    │
+  │ • Gallery View      │    │ • Market Operations │
+  └─────────────────────┘    └─────────────────────┘
+           │                          │
+           └──────────────────────────┘
+                        │
+             ┌─────────────────────┐    ┌─────────────────────┐
+             │   Unified API       │◄──►│   Smart Contract    │
+             │                     │    │                     │
+             │ • Ledger Integration│    │ • Compact Language  │
+             │ • State Management  │    │ • NFT Integration   │
+             │ • Type Safety       │    │ • Breeding Logic    │
+             │ • Browser/Node.js   │    │ • Marketplace Logic │
+             └─────────────────────┘    └─────────────────────┘
+                       │                          ▲
+          ┌────────────────────────────┐          │
+          │       Proof Server         │──────────┘
+          │ (Executes smart contract   │
+          │  circuits)                 │
+          └────────────────────────────┘
+                       │
+          ┌────────────────────────────┐
+          │      Midnight Network      │
+          └────────────────────────────┘
 ```
 
-### Develop
+## Project Structure & Components
 
-To develop all apps and packages, run the following command:
+### Core Applications
+- **`apps/web/`** - React web application featuring:
+  - Interactive projects interface - where users can interact with every launched project
+  - Midnight Lace wallet integration
+  - Real-time contract state synchronization
+  - Responsive UI design
 
-```
-cd my-turborepo
+### Smart Contracts
+- **`packages/contract/`** - Compact language implementation:
+  - Token generation mechanics
+  - Create public and private token sale algorithm
+  - Fund sale logic - _private and public_
+  - Refund contribution logic 
+  - Claim tokens logic - _sale organiser only_
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+### API Layer  
+- **`packages/api/kitties/`** - Unified API abstraction:
+  - Cross-platform compatibility (Browser/Node.js)
+  - Provider pattern for blockchain interactions
+  - Type-safe contract bindings
+  - Transaction management utilities
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+### Development Tools
+- **`packages/cli/kitties/`** - Comprehensive CLI toolkit:
+  - Contract deployment and management
+  - Interactive create, fund, refund and claim actions
+  - Development environment utilities
+  - Testing and debugging tools
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## 🚀 Getting Started
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+### Prerequisites
+- **Node.js** v18 or higher
+- **Yarn** package manager
+- **Midnight Lace Wallet** (for web interface)
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+### Quick Installation
+```bash
+# Clone and install dependencies
+git clone https://github.com/techmartins72/Midnight-Decentralized-Launchpad.git
+cd statera
+yarn install
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+# Build all packages
+yarn build
 ```
 
-## Useful Links
+### 🌐 Web Application
+```bash
+# Launch the React frontend
+yarn start
+# Access at http://127.0.0.1:8080/
+```
 
-Learn more about the power of Turborepo:
+### 💻 CLI Operations  
+```bash
+# Interactive CLI with testnet (external proof server)
+yarn kitties-cli-remote
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+# CLI with integrated proof server
+yarn kitties-cli-remote-ps
+```
+
+**CLI Features:**
+- 🚀 Deploy new midnight launchpad
+- 🏬 Create public and private sale
+- 🧬 Fund a sale project
+- 🧬 Request refund from a sale previously participated in
+- 💰 Receive contributed tokens - _for sale organisers only_
+- 📊 View public ledger state (sale info, super admin, TVL)
+- 🔏 View private state (participated sale info: allocation, contribution, claimedAllocation & sale id)
+
+## Compact Language & Smart Contract
+
+This project is a practical demonstration of the Midnight smart contract, **Compact**. The smart contract demonstrates how to create, manage, transfer and store tokens on the midnight network while integrating external modules.
+
+### Smart Contract Architecture
+
+This project demonstrates how to work with external NFT modules from the [`midnight-contracts`](https://github.com/riusricardo/midnight-contracts) repository:
+
+### What This Approach Provides:
+- **Time Saving** - No need to implement standard NFT functionality from scratch
+- **Reliability** - Uses tested NFT implementations as a foundation
+- **Modularity** - Clean separation between standard and custom functionality  
+- **Learning** - Shows how to build on existing Midnight infrastructure
+
+## Documentation
+
+- [Contract Development Guide](packages/contract/README.md)
+- [API Reference](packages/api/README.md)
+- [CLI Usage Guide](packages/cli/README.md)
+
+## Contributing
+
+This project welcomes contributions and questions from anyone interested in learning about Midnight development:
+
+### How to Contribute:
+- **Ask Questions** - Open issues if anything is unclear
+- **Report Bugs** - Help improve the codebase
+- **Suggest Improvements** - Ideas for better examples or documentation
+- **Add Examples** - More test cases or usage examples
+- **Improve UI** - Make the interface more user-friendly
+
+### Development Process:
+1. Fork the repository
+2. Create a feature branch
+3. Implement changes with tests
+4. Ensure all checks pass
+5. Submit a pull request
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+### What this means:
+
+- ✅ **Free to use** in open source projects
+- ✅ **Free to modify** and distribute
+
+---
+
+**Built with ❤️ for the Midnight ecosystem**
+
+_Empowering developers to build privacy-first applications with confidence._
+
+---
+
+<div align="center">
+
+[🌐 Midnight Network](https://midnight.network) • [📚 Documentation](https://docs.midnight.network) • [💬 Community](https://discord.gg/midnight)
+
+</div>
