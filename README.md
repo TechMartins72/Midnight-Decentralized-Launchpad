@@ -1,4 +1,4 @@
-# 🐱 Midnight Launchpad
+# Midnight Launchpad
 
 <div align="center">
 
@@ -36,7 +36,7 @@
 
 ## Project Overview
 
-**Midnight Launchpad** is a decentralized crypto launchpad, inpired by **Polkastarter**. It demonstrates the capabilities of the **Midnight blockchain** ecosystem and its smart contract, **Compact programming language**, showing how it ensures privacy with compliance and gives users control over their own data.
+**Midnight Launchpad** is a compliant and privacy-preserving decentralized crypto launchpad, inpired by **Polkastarter**. It demonstrates the capabilities of the **Midnight blockchain** ecosystem and its smart contract, **Compact**, showing how it ensures privacy (and offers selective disclosure) with compliance and gives users control over their data.
 
 ### Key Features
 
@@ -97,14 +97,14 @@ This project shows how different components work together in the Midnight ecosys
   - Claim tokens logic - _sale organiser only_
 
 ### API Layer  
-- **`packages/api/kitties/`** - Unified API abstraction:
+- **`packages/api/`** - Unified API abstraction:
   - Cross-platform compatibility (Browser/Node.js)
   - Provider pattern for blockchain interactions
   - Type-safe contract bindings
   - Transaction management utilities
 
 ### Development Tools
-- **`packages/cli/kitties/`** - Comprehensive CLI toolkit:
+- **`packages/cli/`** - Comprehensive CLI toolkit:
   - Contract deployment and management
   - Interactive create, fund, refund and claim actions
   - Development environment utilities
@@ -121,7 +121,7 @@ This project shows how different components work together in the Midnight ecosys
 ```bash
 # Clone and install dependencies
 git clone https://github.com/techmartins72/Midnight-Decentralized-Launchpad.git
-cd statera
+cd Midnight-Decentralized-Launchpad
 yarn install
 
 # Build all packages
@@ -155,7 +155,7 @@ yarn kitties-cli-remote-ps
 
 ## Compact Language & Smart Contract
 
-This project is a practical demonstration of the Midnight smart contract, **Compact**. The smart contract demonstrates how to create, manage, transfer and store tokens on the midnight network while integrating external modules.
+This project is a practical demonstration of the Midnight smart contract, **Compact**. The smart contract demonstrates how to create, manage, transfer and store tokens on the Midnight Network.
 
 ### Smart Contract Architecture
 
@@ -199,14 +199,17 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 ### What this means:
 
-- ✅ **Free to use** in open source projects
+- ✅ **Free to use** in personal and commercial projects
 - ✅ **Free to modify** and distribute
+- ✅ **Free to use** in proprietary software
+- ⚠️ **No warranty** - provided "as is"
+- 📝 **Attribution required** - must include the original license and copyright notice
 
 ---
 
 **Built with ❤️ for the Midnight ecosystem**
 
-_Empowering developers to build privacy-first applications with confidence._
+_Empowering developers to build compliance and privacy-first applications with confidence._
 
 ---
 
