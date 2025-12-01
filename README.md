@@ -26,9 +26,9 @@
 
 ### Documentation & Guides
 
-- [Contract Guide](packages/contracts/kitties/README.md)
-- [API Reference](packages/api/kitties/README.md)
-- [CLI Usage Guide](packages/cli/kitties/README.md)
+- [Contract Guide](packages/contract/README.md)
+- [API Reference](packages/api/README.md)
+- [CLI Usage Guide](packages/cli/README.md)
 
 ## Project Overview
 
