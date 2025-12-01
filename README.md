@@ -20,11 +20,7 @@
 - [Project Structure & Components](#project-structure--components)
 - [Getting Started](#-getting-started)
 - [Compact Language & Smart Contract](#compact-language--smart-contract)
-- [NFT Module Integration](#nft-module-integration)
-- [Development & Testing](#-development--testing)
-- [Why This Project Matters](#why-this-project-matters)
 - [Documentation](#documentation)
-- [Documentation & Resources](#documentation--resources)
 - [Contributing](#contributing)
 - [License](#-license)
 
