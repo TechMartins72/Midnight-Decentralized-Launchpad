@@ -11,7 +11,7 @@ import TokenMint;
 import SalesManager;
 
 /** exports types, circuits and witnesses from imported modules, making them accessible **/
-export { createSale, fundSale, claimTokens, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createYourToken, fundingInfo, SaleInfo, FundingInfo, UserPrivateState };
+export { createSale, fundSale, claimTokens, SaleInfo, Sale, raisedTokenPool, superAdmin, contractSalesInfo, TVL, createYourToken, fundingInfo, SaleInfo, FundingInfo, UserPrivateState, refund, receiveFundsRaised, CoinInfo, TokenSold, joinAllowedList, allowedUser};
 
 /** Just as in ts, constructor initializes ledger variables with specified parameter during deployment **/
 constructor(address: ZswapCoinPublicKey, initialNonce: Bytes<32>) {
@@ -19,5 +19,13 @@ constructor(address: ZswapCoinPublicKey, initialNonce: Bytes<32>) {
     uniqueIndex.increment(1);
     receiverAddress = disclose(address);
 }
+
+export circuit receiveSaleToken(coin: CoinInfo): [] {
+    const disclosedCoin = disclose(coin);
+    receive(disclosedCoin);
+
+    TVL.writeCoin(disclosedCoin, right<ZswapCoinPublicKey, ContractAddress>(kernel.self()));
+}
+
 
 /** This compact page does nothing more that being the entry point to our contract and exporting all defined circuits, witnesses and ledger **/

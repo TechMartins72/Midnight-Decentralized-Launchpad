@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "start": "turbo run start --filter=@statera/ui",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -35,6 +36,8 @@
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@midnight-ntwrk/onchain-runtime": "^0.3.0",
+    "@midnight-ntwrk/zswap": "4.0.0",
     "prettier": "^3.6.2",
     "turbo": "^2.6.1",
     "@eslint/js": "^9.39.1",

@@ -24,6 +24,11 @@ module Utils {
         raisedTokenPool.writeCoin(
             coinToInsert,
             right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
-    );
+        );
     }
+    export circuit joinAllowedList(userId: Bytes<32>): [] {
+        assert(!allowedUser.member(disclose(userId)), "User already exist");
+        allowedUser.insert(disclose(userId));
+    }
+    
 }

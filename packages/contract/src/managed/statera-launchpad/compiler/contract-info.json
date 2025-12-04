@@ -1,6 +1,24 @@
 {
   "circuits": [
     {
+      "name": "joinAllowedList",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "userId",
+          "type": {
+            "type-name": "Bytes",
+            "length": 32
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "createYourToken",
       "pure": false,
       "arguments": [
@@ -38,13 +56,6 @@
         },
         {
           "name": "total_amount",
-          "type": {
-            "type-name": "Uint",
-            "maxval": 18446744073709551615
-          }
-        },
-        {
-          "name": "total_amount_sold",
           "type": {
             "type-name": "Uint",
             "maxval": 18446744073709551615
@@ -170,8 +181,8 @@
         {
           "name": "sale_id",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Uint",
+            "maxval": 4294967295
           }
         }
       ],
@@ -188,8 +199,92 @@
         {
           "name": "sale_id",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "refund",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        },
+        {
+          "name": "refundAmount",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 18446744073709551615
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "receiveFundsRaised",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
+      "name": "receiveSaleToken",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "coin",
+          "type": {
+            "type-name": "Struct",
+            "name": "CoinInfo",
+            "elements": [
+              {
+                "name": "nonce",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "color",
+                "type": {
+                  "type-name": "Bytes",
+                  "length": 32
+                }
+              },
+              {
+                "name": "value",
+                "type": {
+                  "type-name": "Uint",
+                  "maxval": 340282366920938463463374607431768211455
+                }
+              }
+            ]
           }
         }
       ],
@@ -211,15 +306,6 @@
       }
     },
     {
-      "name": "generate_sale_id",
-      "arguments": [
-      ],
-      "result type": {
-        "type-name": "Bytes",
-        "length": 32
-      }
-    },
-    {
       "name": "get_current_time",
       "arguments": [
       ],
@@ -229,7 +315,7 @@
       }
     },
     {
-      "name": "calculateTotalAllocation",
+      "name": "calculate_total_allocation",
       "arguments": [
         {
           "name": "ratio",
@@ -277,8 +363,8 @@
               {
                 "name": "saleId",
                 "type": {
-                  "type-name": "Bytes",
-                  "length": 32
+                  "type-name": "Uint",
+                  "maxval": 4294967295
                 }
               },
               {
@@ -304,6 +390,13 @@
               }
             ]
           }
+        },
+        {
+          "name": "saleId",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
         }
       ],
       "result type": {
@@ -318,8 +411,8 @@
         {
           "name": "sale_id",
           "type": {
-            "type-name": "Bytes",
-            "length": 32
+            "type-name": "Uint",
+            "maxval": 4294967295
           }
         }
       ],
@@ -330,8 +423,8 @@
           {
             "name": "saleId",
             "type": {
-              "type-name": "Bytes",
-              "length": 32
+              "type-name": "Uint",
+              "maxval": 4294967295
             }
           },
           {
@@ -355,6 +448,23 @@
               "maxval": 18446744073709551615
             }
           }
+        ]
+      }
+    },
+    {
+      "name": "remove_sale_from_private_state",
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result type": {
+        "type-name": "Tuple",
+        "types": [
         ]
       }
     },

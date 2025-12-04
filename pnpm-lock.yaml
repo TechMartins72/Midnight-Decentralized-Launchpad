@@ -84,6 +84,12 @@ importers:
       '@eslint/js':
         specifier: ^9.39.1
         version: 9.39.1
+      '@midnight-ntwrk/onchain-runtime':
+        specifier: ^0.3.0
+        version: 0.3.0
+      '@midnight-ntwrk/zswap':
+        specifier: 4.0.0
+        version: 4.0.0
       '@tailwindcss/vite':
         specifier: ^4.1.17
         version: 4.1.17(vite@7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2))
@@ -151,11 +157,7 @@ importers:
         specifier: ^7.2.2
         version: 7.2.2(@types/node@24.10.1)(jiti@2.6.1)(lightningcss@1.30.2)
 
-  apps/admin-app: {}
-
-  apps/proposal-form: {}
-
-  apps/user-app: {}
+  apps/web: {}
 
   packages/api:
     dependencies:
