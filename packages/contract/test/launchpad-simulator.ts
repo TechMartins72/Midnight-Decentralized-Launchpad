@@ -11,13 +11,12 @@ import {
   type Ledger,
   ledger,
   CoinInfo,
-  Witnesses,
 } from "../src/managed/statera-launchpad/contract/index.cjs";
 import {
   type StateraLaunchpadPrivateState,
   witnesses,
 } from "../src/witnesses.js";
-import { sampleTokenType } from "@midnight-ntwrk/zswap";
+import { nativeToken } from "@midnight-ntwrk/zswap";
 import {
   createCoinInfo,
   decodeCoinPublicKey,
@@ -40,7 +39,8 @@ export class LaunchpadSimulator {
     } = this.contract.initialState(
       constructorContext(privateState, this.createPublicKey("super-admin")),
       this.coinPubKeyToEncodedPubKey(this.createPublicKey(organiser)),
-      randomBytes(32)
+      randomBytes(32),
+      1_000_000n
     );
 
     this.baseContext = {
@@ -63,10 +63,16 @@ export class LaunchpadSimulator {
   }
 
   public coin(amount: number): CoinInfo {
-    return encodeCoinInfo(createCoinInfo(this.coinType, BigInt(amount)));
+    return encodeCoinInfo(
+      createCoinInfo(this.coinType, this.scaleFactor() * BigInt(amount))
+    );
   }
 
-  public coinType = sampleTokenType();
+  public coinType = nativeToken();
+
+  public scaleFactor = () => {
+    return this.getLedger().SCALE_FACTOR;
+  };
 
   public createToken(amount: bigint): void {
     const result = this.contract.impureCircuits.createYourToken(
@@ -100,13 +106,13 @@ export class LaunchpadSimulator {
   ): void {
     const saleData = [
       start_price,
-      total_amount,
+      total_amount * this.scaleFactor(),
       exchange_token,
       end_time,
-      min,
-      max,
+      min * this.scaleFactor(),
+      max * this.scaleFactor(),
       infoCID,
-      price_slope,
+      price_slope * this.scaleFactor(),
       isPrivate,
       tge_allocation_percentage,
       vesting_duration,
@@ -148,13 +154,21 @@ export class LaunchpadSimulator {
     const result = this.contract.impureCircuits.refund(
       this.baseContext,
       sale_id,
-      refundAmount
+      refundAmount * this.scaleFactor()
     );
     this.baseContext = result.context;
   }
 
   public claimTokens(sale_id: bigint): void {
     const result = this.contract.impureCircuits.claimTokens(
+      this.baseContext,
+      sale_id
+    );
+    this.baseContext = result.context;
+  }
+
+  public cancelSale(sale_id: bigint): void {
+    const result = this.contract.impureCircuits.cancelSale(
       this.baseContext,
       sale_id
     );

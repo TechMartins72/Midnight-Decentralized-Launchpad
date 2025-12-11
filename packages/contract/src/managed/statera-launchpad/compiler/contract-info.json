@@ -240,6 +240,24 @@
       }
     },
     {
+      "name": "cancelSale",
+      "pure": false,
+      "arguments": [
+        {
+          "name": "sale_id",
+          "type": {
+            "type-name": "Uint",
+            "maxval": 4294967295
+          }
+        }
+      ],
+      "result-type": {
+        "type-name": "Tuple",
+        "types": [
+        ]
+      }
+    },
+    {
       "name": "receiveSaleToken",
       "pure": false,
       "arguments": [

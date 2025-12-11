@@ -2,7 +2,7 @@ module VariablesAndTypes {
     import CompactStandardLibrary;
 
     /** Exports the types and ledger variables **/
-    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, organizerPubKey, uniqueIndex, nonce, allowedUser, UserPrivateState, FundingInfo, fundingInfo, SCALE_FACTOR, TokenSold, saleId };
+    export { SaleInfo, raisedTokenPool, superAdmin, contractSalesInfo, TVL, Sale, organizerPubKey, uniqueIndex, nonce, allowedUser, UserPrivateState, FundingInfo, fundingInfo, SCALE_FACTOR, TokenSold, saleId, SalePhase };
 
     /** Once contract is deployed, the contract receives a specified amount of token which will be minted on the token contract provided by the organizers **/
     ledger TVL: QualifiedCoinInfo; /** Holds token to be disbursed to investors - We expect that there would be token in the TVL before sale is being created **/
@@ -10,15 +10,17 @@ module VariablesAndTypes {
     ledger raisedTokenPool: QualifiedCoinInfo; // Holds token invested by investors
     sealed ledger organizerPubKey: ZswapCoinPublicKey; // Receives the funds raised contributed by investors
     sealed ledger superAdmin: Bytes<32>; // There will be one super admin, who instantiate new token sale and add or remove other admins
+    sealed ledger SCALE_FACTOR: Uint<64>;
     ledger allowedUser: Set<Bytes<32>>; // contains list of eligible users - in the allowed list
     ledger contractSalesInfo: Map<Uint<64>, SaleInfo>; /** Keeps record of contract information **/
     ledger fundingInfo: Map<Bytes<32>, FundingInfo>; /** Keeps record of contract information **/
-    sealed ledger SCALE_FACTOR: Uint<32>; // 1_000_000 subunit per assets
     ledger uniqueIndex: Counter;
     ledger saleId: Counter;
     ledger nonce: Bytes<32>;
 
     enum Sale { Public, Private };
+
+    enum SalePhase { Live, Cancelled, Ended };
 
     struct SaleInfo {
         target: Uint<64>;
@@ -29,7 +31,7 @@ module VariablesAndTypes {
         saleInfoCID: Bytes<32>;
         amountRaised: Uint<64>;
         acceptableExchangeToken: Bytes<32>;
-        hasEnded: Boolean;
+        phase: SalePhase;
         min: Uint<64>;
         max: Uint<64>;
         participants: Uint<16>;

@@ -321,7 +321,7 @@
     { "op": "mul", "a": 1, "b": 0 },
     { "op": "constrain_bits", "var": 143, "bits": 64 },
     { "op": "copy", "var": 143 },
-    { "op": "load_imm", "imm": "06" },
+    { "op": "load_imm", "imm": "07" },
     { "op": "declare_pub_input", "var": 126 },
     { "op": "declare_pub_input", "var": 13 },
     { "op": "declare_pub_input", "var": 13 },

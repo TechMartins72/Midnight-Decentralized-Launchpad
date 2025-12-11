@@ -3,7 +3,7 @@ module SalesManager {
     import VariablesAndTypes;
     import Utils;
 
-    export { createSale, fundSale, claimTokens, refund, receiveFundsRaised };
+    export { createSale, fundSale, claimTokens, refund, receiveFundsRaised, cancelSale };
 
     circuit createSale(
         start_price: Uint<64>, 
@@ -39,7 +39,7 @@ module SalesManager {
             saleInfoCID: disclose(infoCID),
             amountRaised: 0,
             acceptableExchangeToken: disclose(exchange_token),
-            hasEnded: false,
+            phase: SalePhase.Live,
             min: disclose(min),
             max: disclose(max),
             participants: 0,
@@ -67,7 +67,7 @@ module SalesManager {
         assert(saleInfo.startTime < current_time, "Sale is yet to begin");
         
         saleInfo.saleType == Sale.Private && assert(allowedUser.member(userPk), "You are not eligible for this sale");
-        assert(!saleInfo.hasEnded, "This sale has ended");
+        assert(saleInfo.phase == SalePhase.Live, "This sale has either been cancelled or ended");
         assert(saleInfo.acceptableExchangeToken == disclosedCoin.color, "Please provided the acceptable token");
         assert(disclosedCoinAmount <= saleInfo.max && disclosedCoinAmount >= saleInfo.min, "Amount entered breaches did not fall within threshold");
         assert(saleInfo.amountRaised < saleInfo.target, "Sale target has already been achieved");
@@ -96,7 +96,7 @@ module SalesManager {
             
             contractSalesInfo.insert(disclosedSaleId, SaleInfo {
                 ...saleInfo,
-                hasEnded: current_time > saleInfo.endTime,
+                phase: current_time > saleInfo.endTime ? SalePhase.Ended : SalePhase.Live,
                 amountRaised: disclosedCoinAmount + saleInfo.amountRaised as Uint<64>,
                 totalTokenSold: allocation + saleInfo.totalTokenSold as Uint<64>,
             });
@@ -119,7 +119,7 @@ module SalesManager {
 
             contractSalesInfo.insert(disclosedSaleId, SaleInfo {
                 ...saleInfo,
-                hasEnded: current_time > saleInfo.endTime,
+                phase: current_time > saleInfo.endTime ? SalePhase.Ended : SalePhase.Live,
                 participants: (saleInfo.participants + 1) as Uint<16>,
                 amountRaised: disclosedCoinAmount + saleInfo.amountRaised as Uint<64>,
                 totalTokenSold: allocation + saleInfo.totalTokenSold as Uint<64>,
@@ -179,7 +179,7 @@ module SalesManager {
         const userPk = ownPublicKey().bytes;
         assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
         const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
-        assert(!saleInfo.hasEnded, "Sale is over can't apply for a refund");
+        assert(saleInfo.phase == SalePhase.Live, "Sale is over can't apply for a refund");
 
         const funder = public_key(disclose(local_secret_key()));
         
@@ -198,6 +198,12 @@ module SalesManager {
         if (funderPrivateState.contribution == disclosedRefundAmount) {
             remove_sale_from_private_state(disclosedSaleId);
             fundingInfo.remove(funder);
+
+            contractSalesInfo.insert(disclosedSaleId, SaleInfo {
+                ...saleInfo,
+                participants: (saleInfo.participants - 1),
+            });
+
         } else {
             const newPrivateState = UserPrivateState {
                 ...funderPrivateState,
@@ -236,7 +242,7 @@ module SalesManager {
         const disclosedSaleId = disclose(sale_id);
         assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");  
         const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
-        assert(!saleInfo.hasEnded, "Sale is over can't receive funds yet");
+        assert(saleInfo.phase != SalePhase.Live, "Sale is still live - can't withdraw");
         assert(!saleInfo.hasWithdrawn, "Funds has been withdrawn from this sale");
         assert(raisedTokenPool.value > 0, "No tokens left in this pool");
         assert(saleInfo.amountRaised > 0, "No token raised from this sale");
@@ -258,4 +264,23 @@ module SalesManager {
             hasWithdrawn: true,
         });
     }
+
+    circuit cancelSale(sale_id: Uint<32>) :[] {
+        const disclosedSaleId = disclose(sale_id);
+        assert(ownPublicKey().bytes == superAdmin, "Unauthorized access. You can cancel this sale");
+        assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
+        
+        const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+        assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
+
+        
+        contractSalesInfo.insert(disclosedSaleId, SaleInfo {
+            ...saleInfo,
+            phase: SalePhase.Cancelled,
+        });
+        
+
+    }
+    
+
 }

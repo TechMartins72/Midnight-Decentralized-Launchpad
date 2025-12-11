@@ -24,7 +24,9 @@ describe("Contract test user activities on public sale", () => {
 
   it("Contract test for receiving minted tokens from another contract", () => {
     simulator_public_sale.receiveToken(20000);
-    expect(simulator_public_sale.getLedger().TVL.value).toBe(20000n);
+    expect(simulator_public_sale.getLedger().TVL.value).toBe(
+      20000n * simulator_public_sale.scaleFactor()
+    );
   });
 
   it("should create new sale", () => {
@@ -46,7 +48,9 @@ describe("Contract test user activities on public sale", () => {
     );
 
     expect(simulator_public_sale.getLedger().contractSalesInfo.size()).toBe(1n);
-    expect(simulator_public_sale.getLedger().TokenSold).toBe(5000n);
+    expect(simulator_public_sale.getLedger().TokenSold).toBe(
+      5000n * simulator_public_sale.scaleFactor()
+    );
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .vestClaimPercentagePerDay
@@ -65,11 +69,11 @@ describe("Contract test user activities on public sale", () => {
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .amountRaised
-    ).toBe(1000n);
+    ).toBe(1000n * simulator_public_sale.scaleFactor());
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .totalTokenSold
-    ).toBe(100n);
+    ).toBe(100n * simulator_public_sale.scaleFactor());
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .participants
@@ -78,36 +82,38 @@ describe("Contract test user activities on public sale", () => {
 
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].contribution
-    ).toBe(1000n);
+    ).toBe(1000n * simulator_public_sale.scaleFactor());
 
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(100n);
+    ).toBe(100n * simulator_public_sale.scaleFactor());
   });
 
   it("should allow participant to initiate a refund", () => {
     simulator_public_sale.refund(1n, 150n);
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].contribution
-    ).toBe(850n);
+    ).toBe(850n * simulator_public_sale.scaleFactor());
 
-    expect(simulator_public_sale.getLedger().raisedTokenPool.value).toBe(850n);
+    expect(simulator_public_sale.getLedger().raisedTokenPool.value).toBe(
+      850n * simulator_public_sale.scaleFactor()
+    );
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .amountRaised
-    ).toBe(850n);
+    ).toBe(850n * simulator_public_sale.scaleFactor());
     expect(
       simulator_public_sale.getLedger().contractSalesInfo.lookup(1n)
         .totalTokenSold
-    ).toBe(85n);
+    ).toBe(85n * simulator_public_sale.scaleFactor());
 
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(85n);
+    ).toBe(85n * simulator_public_sale.scaleFactor());
 
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].contribution
-    ).toBe(850n);
+    ).toBe(850n * simulator_public_sale.scaleFactor());
 
     expect(() => {
       simulator_public_sale.refund(1n, 1000n);
@@ -120,17 +126,38 @@ describe("Contract test user activities on public sale", () => {
     );
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(85n);
+    ).toBe(85n * simulator_public_sale.scaleFactor());
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].claimedAllocation
     ).toBe(0n);
-    expect(simulator_public_sale.getLedger().TVL.value).toBe(20000n);
+    expect(simulator_public_sale.getLedger().TVL.value).toBe(
+      20000n * simulator_public_sale.scaleFactor()
+    );
     simulator_public_sale.claimTokens(1n);
     expect(
       simulator_public_sale.getPrivateState().saleMetadata[0].claimedAllocation
-    ).toBe(85n);
-    expect(simulator_public_sale.getLedger().TVL.value).toBe(19915n);
+    ).toBe(85n * simulator_public_sale.scaleFactor());
+    expect(simulator_public_sale.getLedger().TVL.value).toBe(
+      19915n * simulator_public_sale.scaleFactor()
+    );
     // simulator_public_sale.claimTokens(1n);
+  });
+
+  it("should allow organisers cancel sale", () => {
+    expect(
+      simulator_public_sale.getLedger().contractSalesInfo.lookup(1n).phase
+    ).toBe(0);
+
+    simulator_public_sale.baseContext.currentZswapLocalState.coinPublicKey =
+      simulator_public_sale.coinPubKeyToEncodedPubKey(
+        simulator_public_sale.createPublicKey("super-admin")
+      );
+
+    simulator_public_sale.cancelSale(1n);
+
+    expect(
+      simulator_public_sale.getLedger().contractSalesInfo.lookup(1n).phase
+    ).toBe(1);
   });
 
   it("should allow organizer to claim tokens", () => {
@@ -198,7 +225,9 @@ describe("Contract test user activity on private sale", () => {
 
   it("should add tokens to TVL", () => {
     simulator_private.receiveToken(10000);
-    expect(simulator_private.getLedger().TVL.value).toBe(10000n);
+    expect(simulator_private.getLedger().TVL.value).toBe(
+      10000n * simulator_private.scaleFactor()
+    );
   });
 
   it("should create new sale", () => {
@@ -217,7 +246,9 @@ describe("Contract test user activity on private sale", () => {
     );
 
     expect(simulator_private.getLedger().contractSalesInfo.size()).toBe(1n);
-    expect(simulator_private.getLedger().TokenSold).toBe(5000n);
+    expect(simulator_private.getLedger().TokenSold).toBe(
+      5000n * simulator_private.scaleFactor()
+    );
   });
 
   it("should allow users buy from private token sales", () => {
@@ -228,11 +259,11 @@ describe("Contract test user activity on private sale", () => {
 
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).amountRaised
-    ).toBe(1000n);
+    ).toBe(1000n * simulator_private.scaleFactor());
 
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).totalTokenSold
-    ).toBe(100n);
+    ).toBe(100n * simulator_private.scaleFactor());
 
     expect(simulator_private.getPrivateState().saleMetadata.length).toBe(1);
 
@@ -244,41 +275,44 @@ describe("Contract test user activity on private sale", () => {
 
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).amountRaised
-    ).toBe(1000n);
+    ).toBe(1000n * simulator_private.scaleFactor());
 
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).totalTokenSold
-    ).toBe(100n);
+    ).toBe(100n * simulator_private.scaleFactor());
   });
 
-  it("should allow participant to initiate a refund", () => {
+  it("should allow participants to initiate a refund", () => {
     expect(
       simulator_private.getPrivateState().saleMetadata[0].contribution
-    ).toBe(1000n);
+    ).toBe(1000n * simulator_private.scaleFactor());
     expect(
       simulator_private.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(100n);
+    ).toBe(100n * simulator_private.scaleFactor());
+
     simulator_private.refund(1n, 150n);
 
     expect(
       simulator_private.getPrivateState().saleMetadata[0].contribution
-    ).toBe(850n);
+    ).toBe(850n * simulator_private.scaleFactor());
 
-    expect(simulator_private.getLedger().raisedTokenPool.value).toBe(850n);
+    expect(simulator_private.getLedger().raisedTokenPool.value).toBe(
+      850n * simulator_private.scaleFactor()
+    );
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).amountRaised
-    ).toBe(850n);
+    ).toBe(850n * simulator_private.scaleFactor());
     expect(
       simulator_private.getLedger().contractSalesInfo.lookup(1n).totalTokenSold
-    ).toBe(85n);
+    ).toBe(85n * simulator_private.scaleFactor());
 
     expect(
       simulator_private.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(85n);
+    ).toBe(85n * simulator_private.scaleFactor());
 
     expect(
       simulator_private.getPrivateState().saleMetadata[0].contribution
-    ).toBe(850n);
+    ).toBe(850n * simulator_private.scaleFactor());
 
     expect(() => {
       simulator_private.refund(1n, 1000n);
@@ -291,19 +325,40 @@ describe("Contract test user activity on private sale", () => {
     );
     expect(
       simulator_private.getPrivateState().saleMetadata[0].totalAllocation
-    ).toBe(85n);
+    ).toBe(85n * simulator_private.scaleFactor());
     expect(
       simulator_private.getPrivateState().saleMetadata[0].claimedAllocation
-    ).toBe(0n);
-    expect(simulator_private.getLedger().TVL.value).toBe(10000n);
+    ).toBe(0n * simulator_private.scaleFactor());
+    expect(simulator_private.getLedger().TVL.value).toBe(
+      10000n * simulator_private.scaleFactor()
+    );
     simulator_private.claimTokens(1n);
     expect(
       simulator_private.getPrivateState().saleMetadata[0].claimedAllocation
-    ).toBe(85n);
+    ).toBe(85n * simulator_private.scaleFactor());
     simulator_private.getLedger().contractSalesInfo.lookup(1n).vestingPeriod =
       0n;
-    expect(simulator_private.getLedger().TVL.value).toBe(9915n);
+    expect(simulator_private.getLedger().TVL.value).toBe(
+      9915n * simulator_private.scaleFactor()
+    );
     // simulator_public_sale.claimTokens(1n);
+  });
+
+  it("should allow organisers cancel sale", () => {
+    expect(
+      simulator_private.getLedger().contractSalesInfo.lookup(1n).phase
+    ).toBe(0);
+
+    simulator_private.baseContext.currentZswapLocalState.coinPublicKey =
+      simulator_private.coinPubKeyToEncodedPubKey(
+        simulator_private.createPublicKey("super-admin")
+      );
+
+    simulator_private.cancelSale(1n);
+
+    expect(
+      simulator_private.getLedger().contractSalesInfo.lookup(1n).phase
+    ).toBe(1);
   });
 
   it("should allow organizer to claim tokens", () => {
@@ -325,7 +380,7 @@ describe("Contract test user activity on private sale", () => {
   });
 });
 
-describe("", () => {
+describe("Contract test for sale with vesting period", () => {
   const simulator_with_vest = new LaunchpadSimulator(
     {
       secretKey: randomBytes(32),
@@ -338,10 +393,12 @@ describe("", () => {
 
   it("should add tokens to TVL", () => {
     simulator_with_vest.receiveToken(15000);
-    expect(simulator_with_vest.getLedger().TVL.value).toBe(15000n);
+    expect(simulator_with_vest.getLedger().TVL.value).toBe(
+      15000n * simulator_with_vest.scaleFactor()
+    );
   });
 
-  it("should allow organiser to create a sale with cliff", () => {
+  it("should allow organiser to create a sale with vest", () => {
     simulator_with_vest.createTokenSale(
       10n, // start price
       5000n, // The total amount of token to be sold in this particular sale
@@ -357,7 +414,9 @@ describe("", () => {
     );
 
     expect(simulator_with_vest.getLedger().contractSalesInfo.size()).toBe(1n);
-    expect(simulator_with_vest.getLedger().TokenSold).toBe(5000n);
+    expect(simulator_with_vest.getLedger().TokenSold).toBe(
+      5000n * simulator_with_vest.scaleFactor()
+    );
   });
 
   it("should allow any users buy from token sales", () => {
@@ -371,7 +430,9 @@ describe("", () => {
     expect(
       simulator_with_vest.getPrivateState().saleMetadata[0].claimedAllocation
     ).toBe(0n);
-    expect(simulator_with_vest.getLedger().TVL.value).toBe(15000n);
+    expect(simulator_with_vest.getLedger().TVL.value).toBe(
+      15000n * simulator_with_vest.scaleFactor()
+    );
     expect(() => simulator_with_vest.claimTokens(1n)).throw(
       "No tokens available to claim at this time"
     );
@@ -380,14 +441,9 @@ describe("", () => {
     ).toBe(0n);
     simulator_with_vest.getLedger().contractSalesInfo.lookup(1n).vestingPeriod =
       0n;
-    expect(simulator_with_vest.getLedger().TVL.value).toBe(15000n);
+    expect(simulator_with_vest.getLedger().TVL.value).toBe(
+      15000n * simulator_with_vest.scaleFactor()
+    );
     // simulator_public_sale.claimTokens(1n);
   });
 });
-
-/**
- * @BUGS
- * Participant will always remain as 1n since the private is shared and can't be distinct for each user
- * During refund, allocation should be calculated based on previous price at the time it was bought
- * When a user wants to buy again, allocation for the new buy should be calculated seperately and added to the previous allocation in the private state
- */
