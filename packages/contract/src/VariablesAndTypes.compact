@@ -2,13 +2,12 @@ module VariablesAndTypes {
     import CompactStandardLibrary;
 
     /** Exports the types and ledger variables **/
-    export { SaleInfo, raisedTokenPools, superAdmin, contractSalesInfo, TVL, Sale, organizersPubKey, uniqueIndex, nonce, allowedUser, UserPrivateState, FundingInfo, fundingInfo, TokenSold, saleId, SalePhase, Model, admins};
+    export { SaleInfo, raisedTokenPools, superAdmin, contractSalesInfo, TVL, Sale, uniqueIndex, nonce, allowedUser, UserPrivateState, FundingInfo, fundingInfo, TokenSold, saleId, SalePhase, Model, admins};
 
-    /** Once contract is deployed, the contract receives a specified amount of token which will be minted on the token contract provided by the organizers **/
+    /** Once contract is deployed, the contract receives a specified amount of token which will be minted on the token contract provided by the organisers **/
     ledger TVL: QualifiedCoinInfo; /** Holds token to be disbursed to investors - We expect that there would be token in the TVL before sale is being created **/
     ledger TokenSold: Uint<64>;
     ledger raisedTokenPools: Map<Uint<64>, QualifiedCoinInfo>; // Holds token invested by investors
-    ledger organizersPubKey: Map<Uint<64>, ZswapCoinPublicKey>; // Map of sale id to organizer coin pub key
     sealed ledger superAdmin: Bytes<32>; // There will be one super admin, who instantiate new token sale and add or remove other admins
     sealed ledger admins: Set<Bytes<32>>; // There will be one super admin, who instantiate new token sale and add or remove other admins
     ledger allowedUser: Set<Bytes<32>>; // contains list of eligible users - in the allowed list
@@ -37,7 +36,7 @@ module VariablesAndTypes {
         min: Uint<64>;
         max: Uint<64>;
         participants: Uint<16>;
-        organizer: ZswapCoinPublicKey;
+        organiser: ZswapCoinPublicKey;
         hasWithdrawn: Boolean;
         hasEnded: Boolean;
         exchangeRatio: Uint<64>;

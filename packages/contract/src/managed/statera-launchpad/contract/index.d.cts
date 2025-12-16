@@ -12,7 +12,7 @@ export type SaleInfo = { target: bigint;
                          min: bigint;
                          max: bigint;
                          participants: bigint;
-                         organizer: { bytes: Uint8Array };
+                         organiser: { bytes: Uint8Array };
                          hasWithdrawn: boolean;
                          hasEnded: boolean;
                          exchangeRatio: bigint;

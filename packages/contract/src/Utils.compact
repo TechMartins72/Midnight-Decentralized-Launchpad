@@ -16,15 +16,9 @@ module Utils {
     export circuit recieveFund(disclosedCoin: CoinInfo, disclosedSaleId: Uint<32>): []{
         receive(disclosedCoin);
 
-        const pool = raisedTokenPools.lookup(disclosedSaleId);
-        /** Update the ledger balance */
-        const coinToInsert = pool.value > 0 ? 
-            mergeCoinImmediate(pool, disclosedCoin) :
-            disclosedCoin;
-
         raisedTokenPools.insertCoin(
             disclosedSaleId,
-            coinToInsert,
+            raisedTokenPools.member(disclosedSaleId) ? mergeCoinImmediate(raisedTokenPools.lookup(disclosedSaleId), disclosedCoin) : disclosedCoin,
             right<ZswapCoinPublicKey, ContractAddress>(kernel.self())
         );
     }
@@ -32,6 +26,7 @@ module Utils {
         const funder = public_key(disclose(local_secret_key()));
         const allocation = disclose(calculate_total_allocation(saleInfo.exchangeRatio, saleInfo.slope, disclosedCoinAmount, saleInfo.totalTokenSold));
         const hasContributedBefore = disclose(confirm_sale_in_private_state(disclosedSaleId));
+        
         if (hasContributedBefore) {
             const funderPrivateState = disclose(get_user_private_state_hash(disclosedSaleId));
                 
@@ -65,16 +60,27 @@ module Utils {
                 privateStateHash: userPrivateStateHash,
                 claimComplete: false
             });
-
         }
+
         contractSalesInfo.insert(disclosedSaleId, SaleInfo {
             ...saleInfo,
             participants: hasContributedBefore ? saleInfo.participants : (saleInfo.participants + 1) as Uint<16>,
             amountRaised: disclosedCoinAmount + saleInfo.amountRaised as Uint<64>,
             totalTokenSold: allocation + saleInfo.totalTokenSold as Uint<64>,
-            phase: saleInfo.saleModel == Model.Fixed ?
-                saleInfo.amountRaised == saleInfo.target || saleInfo.endTime < current_time ? SalePhase.Ended : SalePhase.Live : 
+            phase: saleInfo.saleModel == Model.Fixed
+                ?
+                saleInfo.amountRaised == saleInfo.target || saleInfo.endTime < current_time ? SalePhase.Ended : SalePhase.Live
+                : 
                 current_time > saleInfo.endTime ? SalePhase.Ended : SalePhase.Live,
+        });
+    }
+    export circuit updatePhase(current_time: Uint<64>, saleInfo: SaleInfo, disclosedSaleId: Uint<32>) :[] {
+        contractSalesInfo.insert(disclosedSaleId, SaleInfo {
+            ...saleInfo,
+            phase: saleInfo.saleModel == Model.Overflow ?
+                (saleInfo.endTime < current_time && saleInfo.totalTokenSold < saleInfo.target && saleInfo.phase != SalePhase.Cancelled) ?
+                SalePhase.Cancelled : saleInfo.phase :
+                (saleInfo.endTime <= current_time || saleInfo.totalTokenSold == saleInfo.target) ? SalePhase.Ended : saleInfo.phase
         });
     }
 }

@@ -32,9 +32,9 @@ module SalesManager {
 
         const current_time = disclose(get_current_time());
         const claimPercentage = disclose(vesting_duration) == 0 ? 100 : disclose(calculate_vest_claim_percentage_per_day(disclose(vesting_duration), disclose(tge_allocation_percentage)));
-        organizersPubKey.insert(saleId, disclose(organiser));
 
         TokenSold = disclose(total_amount_to_sell) + TokenSold as Uint<64>;
+        
         contractSalesInfo.insert(saleId, SaleInfo {
             target: disclose(calculate_target(disclose(total_amount_to_sell), disclose(price), disclose(scale_factor))),
             startTime: disclose(current_time),
@@ -48,7 +48,7 @@ module SalesManager {
             min: disclose(min_contribtion),
             max: disclose(max_contribtion),
             participants: 0,
-            organizer: disclose(organiser), 
+            organiser: disclose(organiser), 
             hasWithdrawn: false, 
             hasEnded: false,
             exchangeRatio: disclose(price), 
@@ -73,11 +73,7 @@ module SalesManager {
         const current_time = disclose(get_current_time());
         assert(saleInfo.startTime < current_time, "Sale is yet to begin");
 
-        (saleInfo.endTime < current_time && saleInfo.totalTokenSold < saleInfo.target && saleInfo.phase != SalePhase.Cancelled)
-            && contractSalesInfo.insert(disclosedSaleId, SaleInfo {
-                ...saleInfo,
-                phase: SalePhase.Cancelled
-            });
+        updatePhase(current_time, saleInfo, disclosedSaleId);
 
         assert(saleInfo.endTime > current_time, "Sale has ended");
         assert(allowedUser.member(userPk) || saleInfo.saleType == Sale.Public, "You are not eligible for this sale");
@@ -124,6 +120,9 @@ module SalesManager {
         const disclosedSaleId = disclose(sale_id);
         assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
         const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
+
+        updatePhase(disclose(get_current_time()), saleInfo, disclosedSaleId);
+
         assert(saleInfo.phase == SalePhase.Ended, "Can't claim from a live or cancelled sale");
 
         const funderPk = public_key(disclose(local_secret_key()));
@@ -170,18 +169,15 @@ module SalesManager {
         assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");  
         const saleInfo = contractSalesInfo.lookup(disclosedSaleId);
         assert(saleInfo.phase != SalePhase.Live, "Sale is still live - can't withdraw");
+        assert(saleInfo.organiser.bytes == ownPublicKey().bytes, "You are not the organiser");
         assert(!saleInfo.hasWithdrawn, "Funds has been withdrawn from this sale");
         const pool = raisedTokenPools.lookup(disclosedSaleId);
         assert(pool.value > 0, "No token raised from this sale");
         const userPk = ownPublicKey().bytes; 
-        const organizerPk = organizersPubKey.lookup(disclosedSaleId);
-        assert(organizerPk.bytes == ownPublicKey().bytes, "You are not the organizer");
-
-        const organiserPk = organizersPubKey.lookup(disclosedSaleId);
 
         const sendResult = send(
             pool,
-            left<ZswapCoinPublicKey, ContractAddress>(organizerPk),
+            left<ZswapCoinPublicKey, ContractAddress>(saleInfo.organiser),
             saleInfo.amountRaised
         );
 
@@ -195,7 +191,7 @@ module SalesManager {
 
     circuit cancelSale(sale_id: Uint<32>) :[] {
         const disclosedSaleId = disclose(sale_id);
-        assert(ownPublicKey().bytes == superAdmin || admins.member(ownPublicKey().bytes), "Unauthorized access. You can cancel this sale");
+        assert(ownPublicKey().bytes == superAdmin || admins.member(ownPublicKey().bytes), "Unauthorized access. You are not an admin");
         assert(contractSalesInfo.member(disclosedSaleId), "Sale does not exist");
         
         const saleInfo = contractSalesInfo.lookup(disclosedSaleId);

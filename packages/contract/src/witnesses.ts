@@ -64,7 +64,7 @@ export const witnesses = {
     const target = (total_amount_to_sell * price) / scale_factor;
     return [privateState, target];
   },
-  calculate_overflow_total_allocation: (
+  recalculateAllocationAndUpdatePrivateState: (
     { privateState }: WitnessContext<Ledger, StateraLaunchpadPrivateState>,
     sale_id: bigint,
     contribution: bigint,

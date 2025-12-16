@@ -38,9 +38,7 @@ export class LaunchpadSimulator {
       currentZswapLocalState,
     } = this.contract.initialState(
       constructorContext(privateState, this.createPublicKey("super-admin")),
-      this.coinPubKeyToEncodedPubKey(this.createPublicKey(organiser)),
-      randomBytes(32),
-      1_000_000n
+      randomBytes(32)
     );
 
     this.baseContext = {
@@ -62,17 +60,13 @@ export class LaunchpadSimulator {
     return this.baseContext.currentPrivateState;
   }
 
-  public coin(amount: number): CoinInfo {
+  public coin(amount: number, scale_factor: bigint): CoinInfo {
     return encodeCoinInfo(
-      createCoinInfo(this.coinType, BigInt(Number(this.scaleFactor()) * amount))
+      createCoinInfo(this.coinType, scale_factor * BigInt(amount))
     );
   }
 
   public coinType = nativeToken();
-
-  public scaleFactor = () => {
-    return this.getLedger().SCALE_FACTOR;
-  };
 
   public createToken(amount: bigint): void {
     const result = this.contract.impureCircuits.createYourToken(
@@ -100,24 +94,30 @@ export class LaunchpadSimulator {
     max: bigint,
     infoCID: Uint8Array,
     price_slope: bigint,
-    isPrivate: boolean,
     tge_allocation_percentage: bigint,
     vesting_duration: bigint,
-    is_overflow: boolean
+    is_overflow: boolean,
+    scale_factor: bigint,
+    cliff_period: bigint,
+    is_private: boolean,
+    organiser: string
   ): void {
     const saleData = [
       start_price,
-      total_amount * this.scaleFactor(),
+      total_amount * scale_factor,
       exchange_token,
       end_time,
-      min * this.scaleFactor(),
-      max * this.scaleFactor(),
+      min * scale_factor,
+      max * scale_factor,
       infoCID,
-      price_slope * this.scaleFactor(),
-      isPrivate,
+      price_slope * scale_factor,
       tge_allocation_percentage,
       vesting_duration,
-      is_overflow
+      cliff_period,
+      is_overflow,
+      is_private,
+      this.coinPubKeyToEncodedPubKey(this.createPublicKey(organiser)),
+      scale_factor,
     ] as const;
 
     const result = this.contract.impureCircuits.createSale(
@@ -127,10 +127,10 @@ export class LaunchpadSimulator {
     this.baseContext = result.context;
   }
 
-  public receiveToken(amount: number): void {
+  public receiveToken(amount: number, scale_factor: bigint): void {
     const result = this.contract.impureCircuits.receiveSaleToken(
       this.baseContext,
-      this.coin(amount)
+      this.coin(amount, scale_factor)
     );
     this.baseContext = result.context;
   }
@@ -152,11 +152,10 @@ export class LaunchpadSimulator {
     this.baseContext = result.context;
   }
 
-  public refund(sale_id: bigint, refundAmount: bigint): void {
+  public refund(sale_id: bigint): void {
     const result = this.contract.impureCircuits.refund(
       this.baseContext,
-      sale_id,
-      refundAmount * this.scaleFactor()
+      sale_id
     );
     this.baseContext = result.context;
   }
